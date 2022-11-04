@@ -33,6 +33,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
@@ -54,6 +58,13 @@ import java.util.List;
 @TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
 
 public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
+    HardwarePushbotV3 robot   = new HardwarePushbotV3();   // Use a Pushbot's hardware
+    private ElapsedTime     runtime = new ElapsedTime();
+
+    static final double     LEG_TIME_1    = 1;
+    static final double     LEG_TIME_2    = 1;
+    static final double     LEG_TIME_3    = 1;
+    static final double     LEG_TIME_4    = 1;
 
     /*
      * Specify the source for the Tensor Flow Model.
@@ -106,6 +117,8 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         initVuforia();
         initTfod();
 
+        robot.init(hardwareMap);
+
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
@@ -128,6 +141,11 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
+
+            double turn_left_right = 0;
+            double forward_backward = 0;
+            double strafe_left_right = 0;
+
             while (opModeIsActive()) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
@@ -152,6 +170,46 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                         telemetry.update();
                     }
                 }
+                runtime.reset();
+                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1)) {
+                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                    telemetry.update();
+                }
+
+                turn_left_right = 0;
+                forward_backward = 0;
+                strafe_left_right = 0.5;
+
+                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                runtime.reset();
+                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2)) {
+                    telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+                    telemetry.update();
+                }
+
+                turn_left_right = 0;
+                forward_backward = 0;
+                strafe_left_right = 0;
+
+                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                runtime.reset();
+                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3)) {
+                    telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+                    telemetry.update();
+                }
+
+                robot.leftFrontDrive.setPower(0);
+                robot.rightFrontDrive.setPower(0);
+                robot.leftRearDrive.setPower(0);
+                robot.rightRearDrive.setPower(0);
             }
         }
     }
