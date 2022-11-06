@@ -55,7 +55,7 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
+@Autonomous(name = "Concept: TensorFlow Object Detection Webcam", group = "Concept")
 
 public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     HardwarePushbotV3 robot   = new HardwarePushbotV3();   // Use a Pushbot's hardware
@@ -142,10 +142,6 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
         if (opModeIsActive()) {
 
-            double turn_left_right = 0;
-            double forward_backward = 0;
-            double strafe_left_right = 0;
-
             while (opModeIsActive()) {
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
@@ -166,50 +162,146 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                             telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
                             telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
                             telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
+
+                            if (recognition.getLabel() == "1 Bolt") {
+                                double turn_left_right = 0;
+                                double forward_backward = 0;
+                                double strafe_left_right = 0;
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1)) {
+                                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                turn_left_right = 0;
+                                forward_backward = 1;
+                                strafe_left_right = 0;
+
+                                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2)) {
+                                    telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                turn_left_right = 0;
+                                forward_backward = -1;
+                                strafe_left_right = 0;
+
+                                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3)) {
+                                    telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                robot.leftFrontDrive.setPower(0);
+                                robot.rightFrontDrive.setPower(0);
+                                robot.leftRearDrive.setPower(0);
+                                robot.rightRearDrive.setPower(0);
+                            }
+                            if (recognition.getLabel() == "2 Bulb") {
+                                double turn_left_right = 0;
+                                double forward_backward = 0;
+                                double strafe_left_right = 0;
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1)) {
+                                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                turn_left_right = 0;
+                                forward_backward = 0;
+                                strafe_left_right = 1;
+
+                                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2)) {
+                                    telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                turn_left_right = 0;
+                                forward_backward = 0;
+                                strafe_left_right = -1;
+
+                                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3)) {
+                                    telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                robot.leftFrontDrive.setPower(0);
+                                robot.rightFrontDrive.setPower(0);
+                                robot.leftRearDrive.setPower(0);
+                                robot.rightRearDrive.setPower(0);
+                            }
+                            if (recognition.getLabel() == "3 Panel") {
+                                double turn_left_right = 0;
+                                double forward_backward = 0;
+                                double strafe_left_right = 0;
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1)) {
+                                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                turn_left_right = 1;
+                                forward_backward = 0;
+                                strafe_left_right = 0;
+
+                                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2)) {
+                                    telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                turn_left_right = -1;
+                                forward_backward = 0;
+                                strafe_left_right = 0;
+
+                                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3)) {
+                                    telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                robot.leftFrontDrive.setPower(0);
+                                robot.rightFrontDrive.setPower(0);
+                                robot.leftRearDrive.setPower(0);
+                                robot.rightRearDrive.setPower(0);
+                            }
                         }
                         telemetry.update();
                     }
                 }
-                runtime.reset();
-                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1)) {
-                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-                    telemetry.update();
-                }
-
-                turn_left_right = 0;
-                forward_backward = 0;
-                strafe_left_right = 0.5;
-
-                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
-                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
-                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
-                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
-
-                runtime.reset();
-                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2)) {
-                    telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
-                    telemetry.update();
-                }
-
-                turn_left_right = 0;
-                forward_backward = 0;
-                strafe_left_right = 0;
-
-                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
-                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
-                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
-                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
-
-                runtime.reset();
-                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3)) {
-                    telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
-                    telemetry.update();
-                }
-
-                robot.leftFrontDrive.setPower(0);
-                robot.rightFrontDrive.setPower(0);
-                robot.leftRearDrive.setPower(0);
-                robot.rightRearDrive.setPower(0);
             }
         }
     }
