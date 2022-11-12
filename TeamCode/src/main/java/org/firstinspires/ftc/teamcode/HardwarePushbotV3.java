@@ -44,7 +44,8 @@ public class HardwarePushbotV3
     //public DcMotor  SlideMotor = null;
     //public DcMotor  TrackMotor = null;
 
-    //public Servo  servo = null;
+    public Servo  servo = null;
+    public Servo  servo2 = null;
     
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
@@ -62,7 +63,8 @@ public class HardwarePushbotV3
         leftRearDrive  = hwMap.get(DcMotor.class, "left_back");
         rightRearDrive  = hwMap.get(DcMotor.class, "right_back");
         //SlideMotor  = hwMap.get(DcMotor.class, "scoppy_nom_nom");
-        //servo = hwMap.get(Servo.class,"Servo1");
+        servo = hwMap.get(Servo.class,"servo1");
+        servo2 = hwMap.get(Servo.class,"servo2");
         //TrackMotor  = hwMap.get(DcMotor.class, "TrackMotor");
 
 

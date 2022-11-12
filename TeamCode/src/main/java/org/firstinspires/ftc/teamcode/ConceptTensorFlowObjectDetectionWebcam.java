@@ -61,10 +61,20 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     HardwarePushbotV3 robot   = new HardwarePushbotV3();   // Use a Pushbot's hardware
     private ElapsedTime     runtime = new ElapsedTime();
 
-    static final double     LEG_TIME_1    = 1;
-    static final double     LEG_TIME_2    = 1;
-    static final double     LEG_TIME_3    = 1;
-    static final double     LEG_TIME_4    = 1;
+    static final double     LEG_TIME_1_1    = 1;
+    static final double     LEG_TIME_2_1   = 1;
+    static final double     LEG_TIME_3_1   = 1;
+    static final double     LEG_TIME_4_1  = 1;
+
+    static final double     LEG_TIME_1_2    = 1;
+    static final double     LEG_TIME_2_2   = 1;
+    static final double     LEG_TIME_3_2   = 1;
+    static final double     LEG_TIME_4_2  = 1;
+
+    static final double     LEG_TIME_1_3    = 1;
+    static final double     LEG_TIME_2_3   = 1;
+    static final double     LEG_TIME_3_3   = 1;
+    static final double     LEG_TIME_4_3  = 1;
 
     /*
      * Specify the source for the Tensor Flow Model.
@@ -168,7 +178,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 double forward_backward = 0;
                                 double strafe_left_right = 0;
                                 runtime.reset();
-                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1)) {
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1_1)) {
                                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
                                     telemetry.update();
                                 }
@@ -183,7 +193,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
 
                                 runtime.reset();
-                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2)) {
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2_1)) {
                                     telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
                                     telemetry.update();
                                 }
@@ -198,7 +208,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
 
                                 runtime.reset();
-                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3)) {
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3_1)) {
                                     telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
                                     telemetry.update();
                                 }
@@ -213,14 +223,14 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 double forward_backward = 0;
                                 double strafe_left_right = 0;
                                 runtime.reset();
-                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1)) {
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1_2)) {
                                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
                                     telemetry.update();
                                 }
 
                                 turn_left_right = 0;
                                 forward_backward = 0;
-                                strafe_left_right = 1;
+                                strafe_left_right = 0;
 
                                 robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
                                 robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
@@ -228,14 +238,29 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
 
                                 runtime.reset();
-                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2)) {
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2_2)) {
+                                    telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                turn_left_right = 0;
+                                forward_backward = -0.5;
+                                strafe_left_right = 0;
+
+                                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2_2)) {
                                     telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
                                     telemetry.update();
                                 }
 
                                 turn_left_right = 0;
                                 forward_backward = 0;
-                                strafe_left_right = -1;
+                                strafe_left_right = 0;
 
                                 robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
                                 robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
@@ -243,7 +268,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
 
                                 runtime.reset();
-                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3)) {
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3_2)) {
                                     telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
                                     telemetry.update();
                                 }
@@ -258,7 +283,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 double forward_backward = 0;
                                 double strafe_left_right = 0;
                                 runtime.reset();
-                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1)) {
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1_3)) {
                                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
                                     telemetry.update();
                                 }
@@ -273,7 +298,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
 
                                 runtime.reset();
-                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2)) {
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2_3)) {
                                     telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
                                     telemetry.update();
                                 }
@@ -288,7 +313,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
 
                                 runtime.reset();
-                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3)) {
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3_3)) {
                                     telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
                                     telemetry.update();
                                 }
