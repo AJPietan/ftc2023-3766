@@ -126,18 +126,21 @@ public class PushbotTeleopZ_Change_IterativeV2 extends OpMode{
                 robot.rightRearDrive.setPower(right);
 
             }
-            if (gamepad2.left_bumper = true) {
-                robot.servo.setPosition(0.05);
-                robot.servo2.setPosition(0.95);
-            }
-            else if (gamepad2.right_bumper = true) {
-                robot.servo2.setPosition(0.05);
-                robot.servo.setPosition(0.95);
+            double servopos1 = 0.95;
+            double servopos2 = 0.05;
+
+            if (gamepad2.right_trigger > 0.5) {
+                servopos1 = 0.9;
+                servopos2 = 0.1;
             }
             else {
-                robot.servo.setPosition(robot.servo.getPosition());
-                robot.servo2.setPosition(robot.servo2.getPosition());
+                robot.servo.setPosition(0.95);
+                robot.servo2.setPosition(0.05);
             }
+            robot.servo.setPosition(servopos1);
+            robot.servo2.setPosition(servopos2);
+
+            robot.lift.setPower(gamepad2.left_stick_y/2);
         }
 
         else if (base_profile == 2) {

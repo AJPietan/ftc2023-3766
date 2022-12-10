@@ -61,18 +61,20 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     HardwarePushbotV3 robot   = new HardwarePushbotV3();   // Use a Pushbot's hardware
     private ElapsedTime     runtime = new ElapsedTime();
 
-    static final double     LEG_TIME_1_1    = 1;
+    static final double     LEG_TIME_1_start    = 0.6;
+
+    static final double     LEG_TIME_1_1    = 0.5;
     static final double     LEG_TIME_2_1   = 1;
     static final double     LEG_TIME_3_1   = 1;
     static final double     LEG_TIME_4_1  = 1;
 
-    static final double     LEG_TIME_1_2    = 1;
+    static final double     LEG_TIME_1_2    = 2.5;
     static final double     LEG_TIME_2_2   = 1;
     static final double     LEG_TIME_3_2   = 1;
     static final double     LEG_TIME_4_2  = 1;
 
-    static final double     LEG_TIME_1_3    = 1;
-    static final double     LEG_TIME_2_3   = 1;
+    static final double     LEG_TIME_1_3    = 0.5;
+    static final double     LEG_TIME_2_3   = 0.8;
     static final double     LEG_TIME_3_3   = 1;
     static final double     LEG_TIME_4_3  = 1;
 
@@ -83,14 +85,14 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
+    private static final String TFOD_MODEL_ASSET = "model_20221126_181829.tflite";
     // private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/CustomTeamModel.tflite";
 
 
     private static final String[] LABELS = {
-            "1 Bolt",
-            "2 Bulb",
-            "3 Panel"
+            "3",
+            "6",
+            "7"
     };
 
     /*
@@ -127,56 +129,98 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
         initVuforia();
         initTfod();
 
+        boolean finished = false;
+        boolean check2 = false;
+
         robot.init(hardwareMap);
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
          * Do it here so that the Camera Stream window will have the TensorFlow annotations visible.
          **/
-        if (tfod != null) {
-            tfod.activate();
-
-            // The TensorFlow software will scale the input images from the camera to a lower resolution.
-            // This can result in lower detection accuracy at longer distances (> 55cm or 22").
-            // If your target is at distance greater than 50 cm (20") you can increase the magnification value
-            // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
-            // should be set to the value of the images used to create the TensorFlow Object Detection model
-            // (typically 16/9).
-            tfod.setZoom(1.0, 16.0/9.0);
-        }
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
         waitForStart();
+        boolean timmer = false;
+        if (opModeIsActive() && finished == false) {
+            double startdone = 1;
+            while (opModeIsActive() && !finished) {
+                double turn_left_right = 0;
+                double forward_backward = 0;
+                double strafe_left_right = 0;
 
-        if (opModeIsActive()) {
+                if (startdone == 1) {
+                    //short drive
+                    runtime.reset();
 
-            while (opModeIsActive()) {
+                    startdone = 2;
+                    turn_left_right = 0;
+                    forward_backward = -0.35;
+                    strafe_left_right = -0.2;
+
+                    robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                    robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                    robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                    robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+                    while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1_start)) {
+                        telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                        telemetry.update();
+                    }
+                    runtime.reset();
+                    turn_left_right = 0;
+                    forward_backward = 0;
+                    strafe_left_right = 0;
+                    robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                    robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                    robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                    robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+                    //grab tfod stuff
+                }
+//                if (runtime.seconds() > 11) {
+//                    telemetry.addData("# seconds = 11","", runtime.seconds());
+//                    telemetry.update();
+//                }
+
+                runtime.reset();
+                tfod.activate();
+                tfod.setZoom(1.0, 16.0 / 9.0);
+
+                while (opModeIsActive() && runtime.seconds()<5) {
+                    telemetry.addData("# TFOD on","%2.5f S Elapsed", runtime.seconds());
+                    telemetry.update();
+                    sleep(100);
+                }
+
+                telemetry.addData("# TFOD ","DONE");
+                telemetry.update();
+
+
+
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
+                    while (opModeIsActive()) {
+
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+
                     if (updatedRecognitions != null) {
                         telemetry.addData("# Objects Detected", updatedRecognitions.size());
-
                         // step through the list of recognitions and display image position/size information for each one
                         // Note: "Image number" refers to the randomized image orientation/number
-                        for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
-                            double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-                            double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
-                            double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
+                        for (Recognition recognition : updatedRecognitions) {//Camera is likely able to read more than one image at a time, so when it doesn't see any images, it won't loop through any code.
+                            double col = (recognition.getLeft() + recognition.getRight()) / 2;
+                            double row = (recognition.getTop() + recognition.getBottom()) / 2;
+                            double width = Math.abs(recognition.getRight() - recognition.getLeft());
+                            double height = Math.abs(recognition.getTop() - recognition.getBottom());
 
-                            telemetry.addData(""," ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
-                            telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
+                            telemetry.addData("", " ");
+                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100);
+                            telemetry.addData("- Position (Row/Col)", "%.0f / %.0f", row, col);
+                            telemetry.addData("- Size (Width/Height)", "%.0f / %.0f", width, height);
 
-                            if (recognition.getLabel() == "1 Bolt") {
-                                double turn_left_right = 0;
-                                double forward_backward = 0;
-                                double strafe_left_right = 0;
+                            if (recognition.getLabel() == "3") {
                                 runtime.reset();
                                 while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1_1)) {
                                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
@@ -184,8 +228,8 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 }
 
                                 turn_left_right = 0;
-                                forward_backward = 1;
-                                strafe_left_right = 0;
+                                forward_backward = -0.25;
+                                strafe_left_right = 0.20;
 
                                 robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
                                 robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
@@ -199,8 +243,8 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 }
 
                                 turn_left_right = 0;
-                                forward_backward = -1;
-                                strafe_left_right = 0;
+                                forward_backward = 0;
+                                strafe_left_right = 0.5;
 
                                 robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
                                 robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
@@ -217,11 +261,58 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 robot.rightFrontDrive.setPower(0);
                                 robot.leftRearDrive.setPower(0);
                                 robot.rightRearDrive.setPower(0);
+                                finished = true;
+                                check2 = true;
+
                             }
-                            if (recognition.getLabel() == "2 Bulb") {
-                                double turn_left_right = 0;
-                                double forward_backward = 0;
-                                double strafe_left_right = 0;
+                            if (recognition.getLabel() == "6") {
+
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1_3)) {
+                                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                turn_left_right = 0;
+                                forward_backward = -0.25;
+                                strafe_left_right = -0.20;
+
+                                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2_3)) {
+                                    telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                turn_left_right = 0;
+                                forward_backward = 0;
+                                strafe_left_right = -0.5;
+
+                                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                                runtime.reset();
+                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3_3)) {
+                                    telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+                                    telemetry.update();
+                                }
+
+                                robot.leftFrontDrive.setPower(0);
+                                robot.rightFrontDrive.setPower(0);
+                                robot.leftRearDrive.setPower(0);
+                                robot.rightRearDrive.setPower(0);
+                                finished = true;
+                                check2 = true;
+                            }
+                            if (recognition.getLabel() == "7") {
+
+
                                 runtime.reset();
                                 while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1_2)) {
                                     telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
@@ -229,7 +320,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 }
 
                                 turn_left_right = 0;
-                                forward_backward = 0;
+                                forward_backward = -0.25;
                                 strafe_left_right = 0;
 
                                 robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
@@ -244,7 +335,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 }
 
                                 turn_left_right = 0;
-                                forward_backward = -0.5;
+                                forward_backward = 0;
                                 strafe_left_right = 0;
 
                                 robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
@@ -277,56 +368,87 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 robot.rightFrontDrive.setPower(0);
                                 robot.leftRearDrive.setPower(0);
                                 robot.rightRearDrive.setPower(0);
+                                finished = true;
+                                check2 = true;
                             }
-                            if (recognition.getLabel() == "3 Panel") {
-                                double turn_left_right = 0;
-                                double forward_backward = 0;
-                                double strafe_left_right = 0;
-                                runtime.reset();
-                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1_3)) {
-                                    telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
-                                    telemetry.update();
-                                }
 
-                                turn_left_right = 1;
-                                forward_backward = 0;
-                                strafe_left_right = 0;
-
-                                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
-                                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
-                                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
-                                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
-
-                                runtime.reset();
-                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2_3)) {
-                                    telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
-                                    telemetry.update();
-                                }
-
-                                turn_left_right = -1;
-                                forward_backward = 0;
-                                strafe_left_right = 0;
-
-                                robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
-                                robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
-                                robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
-                                robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
-
-                                runtime.reset();
-                                while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3_3)) {
-                                    telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
-                                    telemetry.update();
-                                }
-
-                                robot.leftFrontDrive.setPower(0);
-                                robot.rightFrontDrive.setPower(0);
-                                robot.leftRearDrive.setPower(0);
-                                robot.rightRearDrive.setPower(0);
-                            }
                         }
+
+                        //TODO: if still in while loop after 10 seconds, run default case here.
+
+                        if (runtime.seconds() > 10 && check2 == false) {
+
+
+                            runtime.reset();
+                            while (opModeIsActive() && (runtime.seconds() < LEG_TIME_1_2)) {
+                                telemetry.addData("Path", "Leg 1: %2.5f S Elapsed", runtime.seconds());
+                                telemetry.update();
+                            }
+
+                            turn_left_right = 0;
+                            forward_backward = -0.5;
+                            strafe_left_right = 0;
+
+                            robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                            robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                            robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                            robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                            runtime.reset();
+                            while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2_2)) {
+                                telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+                                telemetry.update();
+                            }
+
+                            turn_left_right = 0;
+                            forward_backward = 0;
+                            strafe_left_right = 0;
+
+                            robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                            robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                            robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                            robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                            runtime.reset();
+                            while (opModeIsActive() && (runtime.seconds() < LEG_TIME_2_2)) {
+                                telemetry.addData("Path", "Leg 2: %2.5f S Elapsed", runtime.seconds());
+                                telemetry.update();
+                            }
+
+                            turn_left_right = 0;
+                            forward_backward = 0;
+                            strafe_left_right = 0;
+
+                            robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
+                            robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
+                            robot.leftRearDrive.setPower(-turn_left_right + forward_backward + strafe_left_right);
+                            robot.rightRearDrive.setPower(turn_left_right + forward_backward + strafe_left_right);
+
+                            runtime.reset();
+                            while (opModeIsActive() && (runtime.seconds() < LEG_TIME_3_2)) {
+                                telemetry.addData("Path", "Leg 3: %2.5f S Elapsed", runtime.seconds());
+                                telemetry.update();
+                            }
+
+                            robot.leftFrontDrive.setPower(0);
+                            robot.rightFrontDrive.setPower(0);
+                            robot.leftRearDrive.setPower(0);
+                            robot.rightRearDrive.setPower(0);
+                            finished = true;
+                        }
+
+                        telemetry.addData("Seconds", runtime.seconds());
                         telemetry.update();
+                        if (runtime.seconds() > 10) {
+                            timmer = true;
+                        }
+                        }
                     }
                 }
+
+                sleep(500000);
+                telemetry.addData("Bottom of Loop","");
+                telemetry.update();
             }
         }
     }
