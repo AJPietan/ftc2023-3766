@@ -32,9 +32,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name="Pushbot: Teleop Z Change V2 (Use this for now.)", group="Pushbot")
+@TeleOp(name="servo read", group="Pushbot")
 //@Disabled
-public class PushbotTeleopZ_Change_IterativeV2 extends OpMode{
+public class servoread extends OpMode{
 
     HardwarePushbotV3 robot       = new HardwarePushbotV3();
     //Define Start Variables
@@ -66,7 +66,6 @@ public class PushbotTeleopZ_Change_IterativeV2 extends OpMode{
         //Reset Variables
         double left;
         double right;
-        double divide = 1.5;
 
         //Define continue when button Y is pressed
         if ((gamepad1.y == true) & (profile_switch_debug == 0)) {
@@ -105,51 +104,43 @@ public class PushbotTeleopZ_Change_IterativeV2 extends OpMode{
             if (gamepad1.left_trigger > 0.1) {
 
                 //Define Strafe Left
-                robot.leftFrontDrive.setPower(gamepad1.left_trigger/divide);
-                robot.rightFrontDrive.setPower(gamepad1.left_trigger/divide);
-                robot.leftRearDrive.setPower(-gamepad1.left_trigger/divide);
-                robot.rightRearDrive.setPower(-gamepad1.left_trigger/divide);
+                robot.leftFrontDrive.setPower(gamepad1.left_trigger);
+                robot.rightFrontDrive.setPower(gamepad1.left_trigger);
+                robot.leftRearDrive.setPower(-gamepad1.left_trigger);
+                robot.rightRearDrive.setPower(-gamepad1.left_trigger);
 
             } else if (gamepad1.right_trigger > 0.1) {
 
                 //Define Strafe Right
-                robot.leftFrontDrive.setPower(-gamepad1.right_trigger/divide);
-                robot.rightFrontDrive.setPower(-gamepad1.right_trigger/divide);
-                robot.leftRearDrive.setPower(gamepad1.right_trigger/divide);
-                robot.rightRearDrive.setPower(gamepad1.right_trigger/divide);
+                robot.leftFrontDrive.setPower(-gamepad1.right_trigger);
+                robot.rightFrontDrive.setPower(-gamepad1.right_trigger);
+                robot.leftRearDrive.setPower(gamepad1.right_trigger);
+                robot.rightRearDrive.setPower(gamepad1.right_trigger);
 
-            } else if (gamepad1.dpad_up == true) {
-                robot.leftFrontDrive.setPower(0.2);
-                robot.rightFrontDrive.setPower(0.2);
-                robot.leftRearDrive.setPower(0.2);
-                robot.rightRearDrive.setPower(0.2);
             } else {
 
                 //Define Forward Backward
-                robot.leftFrontDrive.setPower(-left/divide);
-                robot.rightFrontDrive.setPower(right/divide);
-                robot.leftRearDrive.setPower(-left/divide);
-                robot.rightRearDrive.setPower(right/divide);
+                robot.leftFrontDrive.setPower(-left);
+                robot.rightFrontDrive.setPower(right);
+                robot.leftRearDrive.setPower(-left);
+                robot.rightRearDrive.setPower(right);
 
             }
 
-            double servopos1 = 0.975;
-            double servopos2 = 0.05;
+            robot.servo.setPosition(0.975);
+            robot.servo2.setPosition(0.05);
 
-            if (gamepad2.right_trigger > 0.5) {
-                servopos1 = 0.87;
-                servopos2 = 0.16;
-            }
-            else if (gamepad2.a == true) {
-                servopos1 = 0.95;
-                servopos2 = 0.1;
-            }
-            else {
-                robot.servo.setPosition(0.975);
-                robot.servo2.setPosition(0.05);
-            }
-            robot.servo.setPosition(servopos1);
-            robot.servo2.setPosition(servopos2);
+            robot.servo2.getPosition();
+            robot.servo.getPosition();
+            robot.servo.getDirection();
+
+                telemetry.addData("- servopos", robot.servo.getPosition());
+            telemetry.addData("- servopos", robot.servo2.getPosition());
+            telemetry.addData("- servopos", robot.servo.getDirection());
+            telemetry.addData("- servopos", robot.servo2.getDirection());
+
+            telemetry.update();
+
 
             robot.lift.setPower(-gamepad2.left_stick_y/1.5);
         }
@@ -168,25 +159,6 @@ public class PushbotTeleopZ_Change_IterativeV2 extends OpMode{
             robot.rightFrontDrive.setPower(turn_right_left + forward_backward + -left_right);
             robot.leftRearDrive.setPower(-turn_right_left + forward_backward + left_right);
             robot.rightRearDrive.setPower(turn_right_left + forward_backward + left_right);
-            double servopos1 = 0.975;
-            double servopos2 = 0.05;
-
-            if (gamepad1.right_trigger > 0.5) {
-                servopos1 = 0.87;
-                servopos2 = 0.16;
-            }
-            else if (gamepad1.a == true) {
-                servopos1 = 0.95;
-                servopos2 = 0.1;
-            }
-            else {
-                robot.servo.setPosition(0.975);
-                robot.servo2.setPosition(0.05);
-            }
-            robot.servo.setPosition(servopos1);
-            robot.servo2.setPosition(servopos2);
-
-            robot.lift.setPower(-gamepad1.right_stick_y/1.5);
 //            //Define Forward Backward Controls
 //
 //            if ((gamepad1.left_stick_y > (controller_safe_zone / 100)) || (gamepad1.left_stick_y < (controller_safe_zone / -100))) {

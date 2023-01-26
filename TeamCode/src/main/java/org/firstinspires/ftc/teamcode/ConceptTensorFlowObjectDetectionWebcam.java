@@ -61,7 +61,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     HardwarePushbotV3 robot   = new HardwarePushbotV3();   // Use a Pushbot's hardware
     private ElapsedTime     runtime = new ElapsedTime();
 
-    static final double     LEG_TIME_1_start    = 0.6;
+    static final double     LEG_TIME_1_start    = 0.55;
 
     static final double     LEG_TIME_1_1    = 0.5;
     static final double     LEG_TIME_2_1   = 1;
@@ -74,7 +74,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
     static final double     LEG_TIME_4_2  = 1;
 
     static final double     LEG_TIME_1_3    = 0.5;
-    static final double     LEG_TIME_2_3   = 0.8;
+    static final double     LEG_TIME_2_3   = 0.6;
     static final double     LEG_TIME_3_3   = 1;
     static final double     LEG_TIME_4_3  = 1;
 
@@ -158,7 +158,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                     startdone = 2;
                     turn_left_right = 0;
                     forward_backward = -0.35;
-                    strafe_left_right = -0.2;
+                    strafe_left_right = -0.175;
 
                     robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
                     robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
@@ -228,8 +228,8 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
                                 }
 
                                 turn_left_right = 0;
-                                forward_backward = -0.25;
-                                strafe_left_right = 0.20;
+                                forward_backward = -0.20;
+                                strafe_left_right = 0.25;
 
                                 robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
                                 robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
@@ -275,7 +275,7 @@ public class ConceptTensorFlowObjectDetectionWebcam extends LinearOpMode {
 
                                 turn_left_right = 0;
                                 forward_backward = -0.25;
-                                strafe_left_right = -0.20;
+                                strafe_left_right = -0.25;
 
                                 robot.leftFrontDrive.setPower(-turn_left_right + forward_backward + -strafe_left_right);
                                 robot.rightFrontDrive.setPower(turn_left_right + forward_backward + -strafe_left_right);
